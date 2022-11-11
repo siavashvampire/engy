@@ -26,12 +26,13 @@ def query_handler(update: Update, context: CallbackContext) -> None:
 
 def text_handler(update: Update, context: CallbackContext) -> None:
     chat_data = context.chat_data
-    text = update.message.text
+    command = update.message.text
+    command = str(command).lower()
     if 'command' not in chat_data.keys() or chat_data['command'] == '':
-        if text == 'time':
+        if command == 'time':
             time(update, context)
             return
-        elif text == 'jtime':
+        elif command == 'jtime':
             jtime(update, context)
             return
         update.message.reply_text("command not set")
@@ -60,8 +61,8 @@ def audio_handler(update: Update, context: CallbackContext):
     file = audio.get_file()
     file = file.download(str(path_temp))
 
-    pydub.AudioSegment.ffmpeg = "D:/project/engy/core/FFmpeg/bin/ffmpeg.exe"
-    pydub.AudioSegment.converter = "D:/project/engy/core/FFmpeg/bin/ffmpeg.exe"
+    pydub.AudioSegment.ffmpeg = "F:/siavash sepahi/engy/core/FFmpeg/bin/ffmpeg.exe"
+    pydub.AudioSegment.converter = "F:/siavash sepahi/engy/core/FFmpeg/bin/ffmpeg.exe"
     ogg_version = pydub.AudioSegment.from_ogg(str(path_temp))
     path_temp2 = str(parent_path.joinpath(path + "test.wav"))
     ogg_version.export(path_temp2, format="wav")
@@ -71,11 +72,16 @@ def audio_handler(update: Update, context: CallbackContext):
         audio_data = r.record(source)
         # recognize (convert from speech to text)
         command = r.recognize_google(audio_data)
-    # update.message.reply_text(command)
-    if command in ['time']:
-        time(update, context)
+    command = str(command).lower()
     os.remove(str(path_temp))
     os.remove(str(path_temp2))
+    if command in ['time']:
+        time(update, context)
+        return
+    if command in ['jtime', 'persian time']:
+        jtime(update, context)
+        return
+    update.message.reply_text(command)
 
 
 def photo_handler(update: Update, context: CallbackContext):

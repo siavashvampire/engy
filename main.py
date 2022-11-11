@@ -30,7 +30,7 @@ def start(update: Update, context: CallbackContext):
 
 
 if __name__ == '__main__':
-    from telegram.ext import CallbackQueryHandler
+    from telegram.ext import CallbackQueryHandler, Dispatcher
     from telegram.ext.updater import Updater
     from telegram.ext.commandhandler import CommandHandler
     from telegram.ext.messagehandler import MessageHandler
@@ -44,12 +44,14 @@ if __name__ == '__main__':
     # from app.accounting.main import set_accounting
 
     updater = Updater(telegram_token, use_context=True)
-
+    dp: Dispatcher = updater.dispatcher
     # updater.dispatcher.add_handler(MessageHandler(Filters.update, all_handler))
-    updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(CommandHandler('time', time))
-    updater.dispatcher.add_handler(CommandHandler('jtime', jtime))
-    updater.dispatcher.add_handler(MessageHandler(Filters.text, text_handler))
+    # dp.add_handler()
+
+    dp.add_handler(CommandHandler('start', start))
+    dp.add_handler(CommandHandler('time', time))
+    dp.add_handler(CommandHandler('jtime', jtime))
+    dp.add_handler(MessageHandler(Filters.text, text_handler))
     # updater.dispatcher.add_handler(CommandHandler('upload_gcode', gcode))
     # updater.dispatcher.add_handler(CommandHandler('set_density', den))
     # updater.dispatcher.add_handler(CommandHandler('set_idea', set_idea))
