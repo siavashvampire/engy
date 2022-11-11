@@ -1,2 +1,9 @@
 
 *.json
+
+help/
+
+*.pyc
+
+core/FFmpeg
+core/ffmpeg-2022-11-03-git-5ccd4d3060-full_build.7z

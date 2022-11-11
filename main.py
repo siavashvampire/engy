@@ -1,54 +1,69 @@
-import os.path
+from time import sleep
+from app.gmail.gmail import Gmail
 
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+from pathlib import Path
+from telegram.update import Update
+from telegram.ext.callbackcontext import CallbackContext
 
-# If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+from app.time.time import time, jtime
+from core.database.database import create_db
+
+from app.user.api import add_user
+from core.handler import text_handler, audio_handler
+
+parent_path = Path(__file__).resolve().parent
+
+gmail = Gmail()
 
 
-def main():
-    """Shows basic usage of the Gmail API.
-    Lists the user's Gmail labels.
-    """
-    creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
-
-    try:
-        # Call the Gmail API
-        service = build('gmail', 'v1', credentials=creds)
-        results = service.users().labels().list(userId='me').execute()
-        labels = results.get('labels', [])
-
-        if not labels:
-            print('No labels found.')
-            return
-        print('Labels:')
-        for label in labels:
-            print(label['name'])
-
-    except HttpError as error:
-        # TODO(developer) - Handle errors from gmail API.
-        print(f'An error occurred: {error}')
+def start(update: Update, context: CallbackContext):
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
+    user = update.message.from_user
+    temp_message = update.message.reply_text("Hello " + user.first_name + ", Welcome to the Engy.")
+    flag = add_user(user)
+    sleep(1)
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=temp_message.message_id)
+    if flag:
+        update.message.reply_text("You have been added to Engy users correctly")
+    else:
+        update.message.reply_text("Sorry ,we cant add you to Engy users")
 
 
 if __name__ == '__main__':
-    main()
+    from telegram.ext import CallbackQueryHandler
+    from telegram.ext.updater import Updater
+    from telegram.ext.commandhandler import CommandHandler
+    from telegram.ext.messagehandler import MessageHandler
+    from telegram.ext.filters import Filters
+    # from app.density.main import den
+    # from app.gcode.main import gcode, readfile
+    # from app.idea.main import set_idea, add_user_idea, set_idea_upload_stl_file
+    from core.config.database import telegram_token
+
+    # from core.handler import query_handler, photo_handler, text_handler, pdf_handler, all_handler
+    # from app.accounting.main import set_accounting
+
+    updater = Updater(telegram_token, use_context=True)
+
+    # updater.dispatcher.add_handler(MessageHandler(Filters.update, all_handler))
+    updater.dispatcher.add_handler(CommandHandler('start', start))
+    updater.dispatcher.add_handler(CommandHandler('time', time))
+    updater.dispatcher.add_handler(CommandHandler('jtime', jtime))
+    updater.dispatcher.add_handler(MessageHandler(Filters.text, text_handler))
+    # updater.dispatcher.add_handler(CommandHandler('upload_gcode', gcode))
+    # updater.dispatcher.add_handler(CommandHandler('set_density', den))
+    # updater.dispatcher.add_handler(CommandHandler('set_idea', set_idea))
+    # updater.dispatcher.add_handler(CommandHandler('set_accounting', set_accounting))
+    # updater.dispatcher.add_handler(CommandHandler('add_user_idea', add_user_idea))
+    # updater.dispatcher.add_handler(CallbackQueryHandler(query_handler))
+    # updater.dispatcher.add_handler(MessageHandler(Filters.document.file_extension('gcode'), readfile))
+    # updater.dispatcher.add_handler(MessageHandler(Filters.document.file_extension('stl'), set_idea_upload_stl_file))
+    # updater.dispatcher.add_handler(MessageHandler(Filters.document.pdf, pdf_handler))
+    updater.dispatcher.add_handler(MessageHandler(Filters.audio, audio_handler))
+    updater.dispatcher.add_handler(MessageHandler(Filters.voice, audio_handler))
+    updater.dispatcher.add_handler(MessageHandler(Filters.document.audio, audio_handler))
+    # updater.dispatcher.add_handler(MessageHandler(Filters.photo, photo_handler))
+
+    create_db()
+    print('bot is running')
+    updater.start_polling()
