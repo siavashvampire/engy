@@ -97,4 +97,4 @@ class UserDB(User, Base):
 
 
     def __repr__(self):
-        return "<User(%r, %r)>" % (self.name, self.height)
+        return "<User(%r, %r)>" % (self.name, self.id)
