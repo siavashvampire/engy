@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Integer
+from sqlalchemy.orm import relationship
 from telegram import User
 
 from core.database.Base import Base
@@ -65,11 +66,13 @@ class UserDB2(User):
 class UserDB(User, Base):
     __tablename__ = 'users'
 
-    user_id = Column(Integer, primary_key=True, autoincrement=True,unique=True)
-    id = Column(Integer, primary_key=True,unique=True)
+    user_id = Column(Integer, primary_key=True, autoincrement=True, unique=True)
+    id = Column(Integer, primary_key=True, unique=True)
     first_name = Column(String(50))
     last_name = Column(String(50))
     username = Column(String(50))
+
+    user_physics_user = relationship("PhysicsLab1UserDB", back_populates="user_rel")
 
     def __init__(self, id: int = 0, username: str = "", first_name: str = "",
                  last_name: str = "") -> None:
@@ -95,6 +98,5 @@ class UserDB(User, Base):
         except:
             return False
 
-
     def __repr__(self):
-        return "<User(%r, %r)>" % (self.name, self.id)
+        return "<User(%r, %r)>" % (self.first_name, self.id)

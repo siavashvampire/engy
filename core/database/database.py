@@ -26,7 +26,10 @@ session = sessionmaker(bind=engine)()
 
 def create_db() -> None:
     from app.user.model.user_model import UserDB
-    user = UserDB()
+    from app.physicsLab1.model.physics_user_model import PhysicsLab1UserDB, PhysicsLab1ClassDB
+    UserDB()
+    PhysicsLab1ClassDB()
+    PhysicsLab1UserDB()
     Base.metadata.create_all(engine)
 
     # session.add(ed_user)

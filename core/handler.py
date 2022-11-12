@@ -3,32 +3,33 @@ from pathlib import Path
 from telegram.update import Update
 from telegram.ext.callbackcontext import CallbackContext
 
+from app.physicsLab1.api import set_user_access
+from app.physicsLab1.handler import physics_lab_1_query_handler, physics_lab_1_text_handler
 from app.time.time import time, jtime
 
 parent_path = Path(__file__).resolve().parent
 
 
 def query_handler(update: Update, context: CallbackContext) -> None:
-    pass
-    # if context.chat_data['command'] == 'density':
-    #     density_set_density(update, context)
-    # elif context.chat_data['command'] == 'set_idea_stl_file_Q':
-    #     idea_stl_file_question(update, context)
-    # elif context.chat_data['command'] == 'set_idea_set_overview':
-    #     set_idea_accepted_idea(update, context)
-    # elif context.chat_data['command'] == 'set_idea_same_innovator':
-    #     set_idea_same_innovator(update, context)
-    # elif context.chat_data['command'] == 'set_idea_change_user_idea':
-    #     set_idea_change_user_idea(update, context)
-    # elif context.chat_data['command'] == 'set_idea_insert_stl_file':
-    #     set_idea_insert_stl_file(update, context)
+    chat_data = context.chat_data
+
+    if 'app' not in chat_data.keys() or chat_data['app'] == '':
+        query = update.callback_query
+        data = str(query.data)
+        if 'physics_lab_1' in data:
+            data = data.replace("physics_lab_1_", "").split("_")
+            set_user_access(int(data[0]), data[1])
+            query.answer()
+
+    elif chat_data['app'] == 'physics_lab_1':
+        physics_lab_1_query_handler(update, context)
 
 
 def text_handler(update: Update, context: CallbackContext) -> None:
     chat_data = context.chat_data
     command = update.message.text
     command = str(command).lower()
-    if 'command' not in chat_data.keys() or chat_data['command'] == '':
+    if 'app' not in chat_data.keys() or chat_data['app'] == '':
         if command == 'time':
             time(update, context)
             return
@@ -37,6 +38,8 @@ def text_handler(update: Update, context: CallbackContext) -> None:
             return
         update.message.reply_text("command not set")
         return
+    elif context.chat_data['app'] == 'physics_lab_1':
+        physics_lab_1_text_handler(update, context)
     # elif chat_data['command'] == 'set_idea_input_description':
     #     set_idea_input_description(update, context)
     # elif chat_data['command'] == 'set_idea_input_innovator':

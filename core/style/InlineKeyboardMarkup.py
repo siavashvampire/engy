@@ -1,14 +1,24 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
+from app.physicsLab1.api import get_class
+
 keyboard = [
     [
         InlineKeyboardButton("Yes", callback_data="yes"),
         InlineKeyboardButton("No", callback_data="no"),
-
     ]
 ]
 
 ikm_yes_no = InlineKeyboardMarkup(keyboard)
+
+keyboard = [
+    [
+        InlineKeyboardButton("accept", callback_data="accept"),
+        InlineKeyboardButton("reject", callback_data="reject"),
+    ]
+]
+
+ikm_accept_reject = InlineKeyboardMarkup(keyboard)
 
 keyboard = [
     [
@@ -34,3 +44,12 @@ keyboard = [
 ]
 
 ikm_full = InlineKeyboardMarkup(keyboard)
+
+physics_lab_1_classes = get_class()
+keyboard = []
+for physics_lab_1_class in physics_lab_1_classes:
+    keyboard.append([InlineKeyboardButton(
+        physics_lab_1_class.class_name + "\nروز " + physics_lab_1_class.class_day + " ساعت " + physics_lab_1_class.class_time,
+        callback_data=physics_lab_1_class.id)])
+
+ikm_physics_lab_1_class = InlineKeyboardMarkup(keyboard)
