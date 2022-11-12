@@ -12,3 +12,5 @@ else:
     table.insert({'telegram_token': "5712479914:AAHzQldpI9MBVl8jzcvl6m2wN3todG7rn8U"})
 table.update({'admin_id': 99981475})
 
+print("file successfully make")
+
