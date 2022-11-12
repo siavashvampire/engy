@@ -57,12 +57,14 @@ def audio_handler(update: Update, context: CallbackContext):
     r = sr.Recognizer()
     audio = update.message.voice
     path = '../app/time/junk/'
+    if not os.path.exists(parent_path.joinpath(path)):
+        os.makedirs(parent_path.joinpath(path))
     path_temp = parent_path.joinpath(path + "test.ogg")
     file = audio.get_file()
     file = file.download(str(path_temp))
 
-    pydub.AudioSegment.ffmpeg = "F:/siavash sepahi/engy/core/FFmpeg/bin/ffmpeg.exe"
-    pydub.AudioSegment.converter = "F:/siavash sepahi/engy/core/FFmpeg/bin/ffmpeg.exe"
+    # pydub.AudioSegment.ffmpeg = "F:/siavash sepahi/engy/core/FFmpeg/bin/ffmpeg.exe"
+    # pydub.AudioSegment.converter = "F:/siavash sepahi/engy/core/FFmpeg/bin/ffmpeg.exe"
     ogg_version = pydub.AudioSegment.from_ogg(str(path_temp))
     path_temp2 = str(parent_path.joinpath(path + "test.wav"))
     ogg_version.export(path_temp2, format="wav")
@@ -71,15 +73,19 @@ def audio_handler(update: Update, context: CallbackContext):
         # listen for the data (load audio to memory)
         audio_data = r.record(source)
         # recognize (convert from speech to text)
-        command = r.recognize_google(audio_data)
+        try:
+            command = r.recognize_google(audio_data)
+        except:
+            update.message.reply_text("we can not recognize what you said")
+            return
     command = str(command).lower()
     os.remove(str(path_temp))
     os.remove(str(path_temp2))
-    if command in ['time']:
-        time(update, context)
-        return
-    if command in ['jtime', 'persian time']:
+    if command in ['jtime', 'persian time'] or ('jtime' in command or 'persian time' in command):
         jtime(update, context)
+        return
+    if command in ['time'] or 'time' in command:
+        time(update, context)
         return
     update.message.reply_text(command)
 
