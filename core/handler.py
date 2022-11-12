@@ -61,7 +61,7 @@ def audio_handler(update: Update, context: CallbackContext):
         os.makedirs(parent_path.joinpath(path))
     path_temp = parent_path.joinpath(path + "test.ogg")
     file = audio.get_file()
-    file = file.download(str(path_temp))
+    file.download(str(path_temp))
 
     # pydub.AudioSegment.ffmpeg = "F:/siavash sepahi/engy/core/FFmpeg/bin/ffmpeg.exe"
     # pydub.AudioSegment.converter = "F:/siavash sepahi/engy/core/FFmpeg/bin/ffmpeg.exe"
