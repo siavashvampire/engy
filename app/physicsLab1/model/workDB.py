@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
 from core.database.Base import Base
@@ -14,3 +14,6 @@ class PhysicsLab1WorkDB(Base):
 
     user_rel = relationship("UserDB", back_populates="user_physics_work_user")
     work = relationship("PhysicsLab1WorkListDB", back_populates="work")
+
+    def __repr__(self):
+        return f"\n<PhysicsLab1WorkDB {self.user_rel.first_name} , {self.work.work_name}>"

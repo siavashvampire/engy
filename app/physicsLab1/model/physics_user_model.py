@@ -2,10 +2,9 @@ from sqlalchemy import Column, Integer, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 
 from app.user.model.user_model import UserDB
+from core.config.database import admin_id
 from core.database.Base import Base
 from core.database.database import session
-
-# from core.config.database import admin_id
 
 
 class PhysicsLab1UserDB(Base):
@@ -62,6 +61,10 @@ class PhysicsLab1UserDB(Base):
 
     def check_access(self) -> bool:
         return self.accept
+
+    def check_admin(self) -> bool:
+        return False
+        return self.user_rel.id == admin_id
 
     def change_class(self, class_id: int):
         session.query(PhysicsLab1UserDB).filter(PhysicsLab1UserDB.user_id == self.user_id).update(

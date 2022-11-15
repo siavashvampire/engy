@@ -1,6 +1,8 @@
 from telegram import User
 from app.physicsLab1.model.physics_user_model import PhysicsLab1UserDB
 from app.physicsLab1.model.class_model import PhysicsLab1ClassDB
+from app.physicsLab1.model.workDB import PhysicsLab1WorkDB
+from app.physicsLab1.model.workList import PhysicsLab1WorkListDB
 from app.user.model.user_model import UserDB
 from core.database.database import session
 
@@ -21,6 +23,18 @@ def get_user(id_in: int = 0, username: str = "", user: User = None) -> PhysicsLa
 
 def get_class() -> list[PhysicsLab1ClassDB]:
     return session.query(PhysicsLab1ClassDB).all()
+
+
+def get_work_list() -> list[PhysicsLab1WorkListDB]:
+    return session.query(PhysicsLab1WorkListDB).order_by(PhysicsLab1WorkListDB.id).all()
+
+
+def get_work_by_user_id(user_id: int) -> list[PhysicsLab1WorkDB]:
+    return session.query(PhysicsLab1WorkDB).filter(PhysicsLab1WorkDB.user_id == user_id).all()
+
+
+def get_work_by_id(id_in: int) -> PhysicsLab1WorkListDB:
+    return session.query(PhysicsLab1WorkListDB).filter(PhysicsLab1WorkListDB.id == id_in).first()
 
 
 def add_user(user_in: User) -> bool:

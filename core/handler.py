@@ -1,16 +1,19 @@
 from pathlib import Path
 
+from telegram import Document
 from telegram.update import Update
 from telegram.ext.callbackcontext import CallbackContext
 
 from app.physicsLab1.api import set_user_access
-from app.physicsLab1.handler import physics_lab_1_query_handler, physics_lab_1_text_handler
 from app.time.time import time, jtime
+
+import os
 
 parent_path = Path(__file__).resolve().parent
 
 
 def query_handler(update: Update, context: CallbackContext) -> None:
+    from app.physicsLab1.handler import physics_lab_1_query_handler
     chat_data = context.chat_data
 
     if 'app' not in chat_data.keys() or chat_data['app'] == '':
@@ -22,12 +25,17 @@ def query_handler(update: Update, context: CallbackContext) -> None:
             set_user_access(user_id, data[1])
             context.bot.send_message(user_id, "your access has changed to " + data[1])
             query.answer()
+        else:
+            context.bot.send_message(update.effective_user.id, "command not set")
+            return
+
 
     elif chat_data['app'] == 'physics_lab_1':
         physics_lab_1_query_handler(update, context)
 
 
 def text_handler(update: Update, context: CallbackContext) -> None:
+    from app.physicsLab1.handler import physics_lab_1_text_handler
     chat_data = context.chat_data
     command = update.message.text
     command = str(command).lower()
@@ -42,22 +50,21 @@ def text_handler(update: Update, context: CallbackContext) -> None:
         return
     elif context.chat_data['app'] == 'physics_lab_1':
         physics_lab_1_text_handler(update, context)
-    # elif chat_data['command'] == 'set_idea_input_description':
-    #     set_idea_input_description(update, context)
-    # elif chat_data['command'] == 'set_idea_input_innovator':
-    #     set_idea_input_innovator(update, context)
-    # elif chat_data['command'] == 'set_idea_change_user_idea_start':
-    #     set_idea_change_user_idea_start(update, context)
-    # elif context.chat_data['command'] == 'set_idea_input_stl_link':
-    #     set_idea_input_stl_link(update, context)
-    # elif context.chat_data['command'] == 'set_idea_overview':
-    #     set_idea_overview(update, context)
+
+
+def pdf_handler(update: Update, context: CallbackContext) -> None:
+    from app.physicsLab1.handler import physics_lab_1_pdf_handler
+    chat_data = context.chat_data
+    if 'app' not in chat_data.keys() or chat_data['app'] == '':
+        update.message.reply_text("command not set")
+        return
+    elif context.chat_data['app'] == 'physics_lab_1':
+        physics_lab_1_pdf_handler(update, context)
 
 
 def audio_handler(update: Update, context: CallbackContext):
     import speech_recognition as sr
     import pydub
-    import os
 
     r = sr.Recognizer()
     audio = update.message.voice
@@ -111,17 +118,18 @@ def photo_handler(update: Update, context: CallbackContext):
     #     return
 
 
-def pdf_handler(update: Update, context: CallbackContext):
-    pass
-    # chat_data = context.chat_data
-    # if 'command' not in chat_data.keys() or chat_data['command'] == '':
-    #     update.message.reply_text("command not set")
-    #     return
-    # elif chat_data['command'] == 'set_accounting_upload':
-    #     set_accounting_upload_pdf_file(update, context)
-    # else:
-    #     update.message.reply_text("command that set is wrong")
-    #     return
+def download_document(document: Document, path: str, file_name: str = ''):
+    if not os.path.exists(parent_path.joinpath(path)):
+        os.makedirs(parent_path.joinpath(path))
+    if file_name == '':
+        fullpath = path + document.file_name
+    else:
+        fullpath = path + file_name
+
+    path_temp = parent_path.joinpath(fullpath)
+    file = document.get_file()
+    file = file.download(str(path_temp))
+    return path_temp.joinpath(file)
 
 
 def all_handler(update: Update, context: CallbackContext):

@@ -1,6 +1,6 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
-from app.physicsLab1.api import get_class
+from app.physicsLab1.api import get_class, get_work_list, get_work_by_user_id
 
 keyboard = [
     [
@@ -45,11 +45,36 @@ keyboard = [
 
 ikm_full = InlineKeyboardMarkup(keyboard)
 
-physics_lab_1_classes = get_class()
-keyboard = []
-for physics_lab_1_class in physics_lab_1_classes:
-    keyboard.append([InlineKeyboardButton(
-        physics_lab_1_class.class_name + "\nروز " + physics_lab_1_class.class_day + " ساعت " + physics_lab_1_class.class_time,
-        callback_data=physics_lab_1_class.id)])
 
-ikm_physics_lab_1_class = InlineKeyboardMarkup(keyboard)
+def get_ikm_physics_lab_1_class():
+    physics_lab_1_classes = get_class()
+    keyboard = []
+    for physics_lab_1_class in physics_lab_1_classes:
+        keyboard.append([InlineKeyboardButton(
+            physics_lab_1_class.class_name + "\nروز " + physics_lab_1_class.class_day + " ساعت " + physics_lab_1_class.class_time,
+            callback_data=physics_lab_1_class.id)])
+
+    ikm_physics_lab_1_class = InlineKeyboardMarkup(keyboard)
+    return ikm_physics_lab_1_class
+
+
+def get_ikm_physics_lab_1_work_list(user_id: int):
+    physics_lab_1_work_lists = get_work_list()
+    physics_lab_1_work_lists_del = get_work_by_user_id(user_id)
+    del_idx = []
+    for idx, work in enumerate(physics_lab_1_work_lists):
+        for work_del in physics_lab_1_work_lists_del:
+            if work.id == work_del.work.id:
+                del_idx.append(idx)
+
+    del_idx.sort(reverse=True)
+    for idx in del_idx:
+        physics_lab_1_work_lists.pop(idx)
+
+    keyboard = []
+    for physics_lab_1_work_list in physics_lab_1_work_lists:
+        keyboard.append(
+            [InlineKeyboardButton(physics_lab_1_work_list.work_name, callback_data=physics_lab_1_work_list.id)])
+
+    ikm_physics_lab_1_class = InlineKeyboardMarkup(keyboard)
+    return ikm_physics_lab_1_class

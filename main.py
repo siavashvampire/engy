@@ -23,7 +23,7 @@ if __name__ == '__main__':
     from app.user.main import start
     from app.physicsLab1.main import start as physics_start
 
-    from core.handler import text_handler, audio_handler, query_handler
+    from core.handler import text_handler, audio_handler, query_handler, pdf_handler
     # from app.density.main import den
     # from app.gcode.main import gcode, readfile
     # from app.idea.main import set_idea, add_user_idea, set_idea_upload_stl_file
@@ -35,18 +35,13 @@ if __name__ == '__main__':
     updater = Updater(telegram_token, use_context=True)
     dp: Dispatcher = updater.dispatcher
     # updater.dispatcher.add_handler(MessageHandler(Filters.update, all_handler))
-    # dp.add_handler()
 
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('time', time))
     dp.add_handler(CommandHandler('jtime', jtime))
     dp.add_handler(CommandHandler('physics_lab1', physics_start))
     dp.add_handler(MessageHandler(Filters.text, text_handler))
-    # updater.dispatcher.add_handler(CommandHandler('upload_gcode', gcode))
-    # updater.dispatcher.add_handler(CommandHandler('set_density', den))
-    # updater.dispatcher.add_handler(CommandHandler('set_idea', set_idea))
-    # updater.dispatcher.add_handler(CommandHandler('set_accounting', set_accounting))
-    # updater.dispatcher.add_handler(CommandHandler('add_user_idea', add_user_idea))
+    dp.add_handler(MessageHandler(Filters.document.pdf, pdf_handler))
     updater.dispatcher.add_handler(CallbackQueryHandler(query_handler))
     # updater.dispatcher.add_handler(MessageHandler(Filters.document.file_extension('gcode'), readfile))
     # updater.dispatcher.add_handler(MessageHandler(Filters.document.file_extension('stl'), set_idea_upload_stl_file))
