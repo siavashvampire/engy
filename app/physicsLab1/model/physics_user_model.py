@@ -63,7 +63,6 @@ class PhysicsLab1UserDB(Base):
         return self.accept
 
     def check_admin(self) -> bool:
-        return False
         return self.user_rel.id == admin_id
 
     def change_class(self, class_id: int):
