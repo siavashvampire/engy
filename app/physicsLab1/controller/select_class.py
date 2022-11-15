@@ -42,7 +42,7 @@ def enter_student_number(update: Update, context: CallbackContext):
 
     user = get_user(user=update.effective_user)
     user.change_student_number(data)
-    message = update.message.reply_text(
+    update.message.reply_text(
         "Your student number is " + str(user.student_number) + "\n sending your profile to admin for accept")
 
     reset(update, context)
@@ -60,4 +60,3 @@ def enter_student_number(update: Update, context: CallbackContext):
                              "user with first name " + user.user_rel.first_name + "\nclass :" + user.class_rel.class_name + "\n student number :" + str(
                                  user.student_number) + "\n user = @" + user.user_rel.username,
                              reply_markup=ikm_accept_reject)
-    # TODO:bayad bezane ki payam dadeo ina v dokme vase acceptesh bede

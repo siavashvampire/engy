@@ -73,24 +73,44 @@ class UserDB(User, Base):
     username = Column(String(50))
 
     user_physics_user = relationship("PhysicsLab1UserDB", back_populates="user_rel")
+    user_physics_work_user = relationship("PhysicsLab1WorkDB", back_populates="user_rel")
 
     def __init__(self, id: int = 0, username: str = "", first_name: str = "",
                  last_name: str = "") -> None:
-        if id != 0 and username == "":
-            self.id = id
-            # search = self.table.get(query.id == self.id)
-            # username = search['username']
-            # first_name = search['first_name']
-            # self.idea_flag = search['idea_flag']
-            # self.accounting_flag = search['accounting_flag']
+
+        temp: UserDB = session.query(UserDB).filter(
+            UserDB.id == id).first()
+        if temp is not None:
+            self.id = temp.id
+            self.user_id = temp.user_id
+            self.first_name = temp.first_name
+            self.last_name = temp.last_name
+            self.username = temp.username
+            self.user_physics_user = temp.user_physics_user
         else:
-            pass
+            self.id = id
+            self.first_name = first_name
+            self.last_name = last_name
+            self.username = username
+
+        # if id != 0 and username == "":
+        # else:
+        #     self.id = id
+        #     self.user_id = temp.user_id
+        #     self.first_name = temp.first_name
+        #     self.last_name = temp.last_name
+        #     self.username = temp.username
+        #     self.user_physics_user = temp.user_physics_user
 
         User.__init__(self=self, id=id, first_name=first_name, last_name=last_name, is_bot=False,
                       username=username)
         Base.__init__(self)
 
     def insert_user(self) -> bool:
+        temp: UserDB = session.query(UserDB).filter(
+            UserDB.id == self.id).first()
+        if temp is not None:
+            return False
         try:
             session.add(self)
             session.commit()

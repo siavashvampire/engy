@@ -1,30 +1,18 @@
-from sqlalchemy import Column, Integer, Boolean, String, ForeignKey
+from sqlalchemy import Column, Integer, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 
 from app.user.model.user_model import UserDB
 from core.database.Base import Base
 from core.database.database import session
 
-
-
 # from core.config.database import admin_id
-
-class PhysicsLab1ClassDB(Base):
-    __tablename__ = 'physics_lab_1_class'
-
-    id = Column(Integer, primary_key=True, unique=True)
-    class_name = Column(String(50), default="", unique=True)
-    class_day = Column(String(50), default="")
-    class_time = Column(String(50), default="")
-
-    user_rel = relationship("PhysicsLab1UserDB", back_populates="class_rel")
 
 
 class PhysicsLab1UserDB(Base):
     __tablename__ = 'physics_lab_1_users'
 
-    id = Column(Integer, primary_key=True,autoincrement=True, unique=True)
-    user_id = Column(ForeignKey("users.user_id"), primary_key=True,  unique=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, unique=True)
+    user_id = Column(ForeignKey("users.user_id"), primary_key=True, unique=True)
     student_number = Column(Integer, primary_key=True, unique=True, nullable=True)
     class_id = Column(ForeignKey("physics_lab_1_class.id"), nullable=True)
     accept = Column(Boolean, default=0)
@@ -46,17 +34,18 @@ class PhysicsLab1UserDB(Base):
                 self.class_rel = temp.class_rel
                 self.student_number = temp.student_number
                 self.user_rel = temp.user_rel
+                self.user_id = temp.user_id
 
-            # username = search['username']
-            # first_name = search['first_name']
-            # self.idea_flag = search['idea_flag']
-            # self.accounting_flag = search['accounting_flag']
             else:
                 temp: UserDB = session.query(UserDB).filter(
                     UserDB.id == user_id).first()
                 self.user_id = temp.user_id
 
     def insert_user(self) -> bool:
+        temp: PhysicsLab1UserDB = session.query(PhysicsLab1UserDB).join(UserDB).filter(
+            UserDB.user_id == self.user_id).first()
+        if temp is not None:
+            return False
         try:
             session.add(self)
             session.commit()
@@ -64,11 +53,22 @@ class PhysicsLab1UserDB(Base):
         except:
             return False
 
+    def check_exist_user(self) -> bool:
+        temp: PhysicsLab1UserDB = session.query(PhysicsLab1UserDB).join(UserDB).filter(
+            UserDB.user_id == self.user_id).first()
+        if temp is not None:
+            return True
+        return False
+
+    def check_access(self) -> bool:
+        return self.accept
+
     def change_class(self, class_id: int):
         session.query(PhysicsLab1UserDB).filter(PhysicsLab1UserDB.user_id == self.user_id).update(
             {'class_id': class_id})
         self.class_id = class_id
         session.commit()
+
     def change_accept(self, accept: bool):
         session.query(PhysicsLab1UserDB).filter(PhysicsLab1UserDB.user_id == self.user_id).update(
             {'accept': accept})

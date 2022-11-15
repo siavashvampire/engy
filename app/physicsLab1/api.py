@@ -1,5 +1,6 @@
 from telegram import User
-from app.physicsLab1.model.physics_user_model import PhysicsLab1UserDB, PhysicsLab1ClassDB
+from app.physicsLab1.model.physics_user_model import PhysicsLab1UserDB
+from app.physicsLab1.model.class_model import PhysicsLab1ClassDB
 from app.user.model.user_model import UserDB
 from core.database.database import session
 
@@ -22,8 +23,12 @@ def get_class() -> list[PhysicsLab1ClassDB]:
     return session.query(PhysicsLab1ClassDB).all()
 
 
-def add_user(user_in: User):
+def add_user(user_in: User) -> bool:
     return get_user(user=user_in).insert_user()
+
+
+def check_exist_user(user_in: User) -> bool:
+    return get_user(user=user_in).check_exist_user()
 
 
 def set_user_access(id_in, cond):

@@ -11,6 +11,9 @@ gmail = Gmail()
 
 
 if __name__ == '__main__':
+    from core.database.database import create_db
+    create_db()
+
     from telegram.ext import Dispatcher, CallbackQueryHandler
     from telegram.ext.updater import Updater
     from telegram.ext.commandhandler import CommandHandler
@@ -19,7 +22,6 @@ if __name__ == '__main__':
     from app.time.time import time, jtime
     from app.user.main import start
     from app.physicsLab1.main import start as physics_start
-    from core.database.database import create_db
 
     from core.handler import text_handler, audio_handler, query_handler
     # from app.density.main import den
@@ -54,6 +56,5 @@ if __name__ == '__main__':
     updater.dispatcher.add_handler(MessageHandler(Filters.document.audio, audio_handler))
     # updater.dispatcher.add_handler(MessageHandler(Filters.photo, photo_handler))
 
-    create_db()
     print('bot is running')
     updater.start_polling()

@@ -18,7 +18,9 @@ def query_handler(update: Update, context: CallbackContext) -> None:
         data = str(query.data)
         if 'physics_lab_1' in data:
             data = data.replace("physics_lab_1_", "").split("_")
-            set_user_access(int(data[0]), data[1])
+            user_id = int(data[0])
+            set_user_access(user_id, data[1])
+            context.bot.send_message(user_id, "your access has changed to " + data[1])
             query.answer()
 
     elif chat_data['app'] == 'physics_lab_1':

@@ -25,8 +25,14 @@ session = sessionmaker(bind=engine)()
 
 
 def create_db() -> None:
+    from app.physicsLab1.model.workList import PhysicsLab1WorkListDB
+    from app.physicsLab1.model.workDB import PhysicsLab1WorkDB
     from app.user.model.user_model import UserDB
-    from app.physicsLab1.model.physics_user_model import PhysicsLab1UserDB, PhysicsLab1ClassDB
+    from app.physicsLab1.model.class_model import PhysicsLab1ClassDB
+    from app.physicsLab1.model.physics_user_model import PhysicsLab1UserDB
+
+    PhysicsLab1WorkListDB()
+    PhysicsLab1WorkDB()
     UserDB()
     PhysicsLab1ClassDB()
     PhysicsLab1UserDB()
