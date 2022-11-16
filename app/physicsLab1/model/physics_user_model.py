@@ -38,8 +38,10 @@ class PhysicsLab1UserDB(Base):
             else:
                 temp: UserDB = session.query(UserDB).filter(
                     UserDB.id == user_id).first()
-                self.user_id = temp.user_id
-
+                if temp is not None:
+                    self.user_id = temp.user_id
+                else:
+                    self.user_id = 0
     def insert_user(self) -> bool:
         temp: PhysicsLab1UserDB = session.query(PhysicsLab1UserDB).join(UserDB).filter(
             UserDB.user_id == self.user_id).first()
