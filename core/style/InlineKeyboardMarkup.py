@@ -76,8 +76,7 @@ def get_ikm_physics_lab_1_work_list(user_id: int):
         keyboard.append(
             [InlineKeyboardButton(physics_lab_1_work_list.work_name, callback_data=physics_lab_1_work_list.id)])
 
-    ikm_physics_lab_1_class = InlineKeyboardMarkup(keyboard)
-    return ikm_physics_lab_1_class
+    return InlineKeyboardMarkup(keyboard)
 
 
 def get_ikm_physics_lab_1_user_list():
