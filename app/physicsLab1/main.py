@@ -20,12 +20,23 @@ def start(update: Update, context: CallbackContext):
             context.user_data['user'] = user
 
     user = context.user_data['user']
-    # TODO:inja b pain bayad pak she
     set_user_to_user_data(update, context)
 
     chat_data = context.chat_data
     chat_data['app'] = 'physics_lab_1'
+
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
+
+    flag = user.check_admin()
+    if flag:
+        reply_markup = get_ikm_physics_lab_1_user_list()
+        message = update.message.reply_text("select student who want to see his status",
+                                            reply_markup=reply_markup)
+
+        chat_data['physics_lab_1_message_id'] = message.message_id
+        chat_data['command'] = 'select_user_for_detail'
+        return
+
     flag = check_exist_user(user)
     if not flag:
         temp_message = update.message.reply_text("Hello " + user.first_name + ", Welcome to the physics lab1.")
@@ -44,29 +55,20 @@ def start(update: Update, context: CallbackContext):
     else:
         user = get_user(user=user)
         flag = user.check_access()
+
         if not flag:
             update.message.reply_text("you dont have access to send pdf please contact admin")
             return
         else:
-            flag = user.check_admin()
-
-            if not flag:
-                reply_markup = get_ikm_physics_lab_1_work_list(user.user_id)
-                if len(reply_markup.inline_keyboard):
-                    message = update.message.reply_text("please select your HW ,whose you wish to upload",
-                                                        reply_markup=reply_markup)
-                    chat_data['command'] = 'select_work'
-                    chat_data['physics_lab_1_message_id'] = message.message_id
-                else:
-                    update.message.reply_text("you add all of your work")
-                    reset(update, context)
-            else:
-                reply_markup = get_ikm_physics_lab_1_user_list()
-                message = update.message.reply_text("select student who want to see his status",
-                                          reply_markup=reply_markup)
-
+            reply_markup = get_ikm_physics_lab_1_work_list(user.user_id)
+            if len(reply_markup.inline_keyboard):
+                message = update.message.reply_text("please select your HW ,whose you wish to upload",
+                                                    reply_markup=reply_markup)
+                chat_data['command'] = 'select_work'
                 chat_data['physics_lab_1_message_id'] = message.message_id
-                chat_data['command'] = 'select_user_for_detail'
+            else:
+                update.message.reply_text("you add all of your work")
+                reset(update, context)
 
 
 def reset(update: Update, context: CallbackContext):
@@ -78,11 +80,13 @@ def reset(update: Update, context: CallbackContext):
 
 def set_user_to_user_data(update: Update, context: CallbackContext):
     user = get_user_db(user=update.message.from_user)
-    context.user_data['user'] = user
-    context.user_data['user_id'] = user.user_id
-    context.user_data['id'] = user.id
-    context.user_data['first_name'] = user.first_name
-    context.user_data['last_name'] = user.last_name
-    context.user_data['username'] = user.username
-    context.user_data['user_physics_user'] = user.user_physics_user
-    context.user_data['user_physics_work_user'] = user.user_physics_work_user
+    user_data = context.user_data
+    user_data['user'] = user
+    user_data['user_id'] = user.user_id
+    user_data['id'] = user.id
+    user_data['first_name'] = user.first_name
+    user_data['last_name'] = user.last_name
+    user_data['username'] = user.username
+    user_data['user_physics_user'] = user.user_physics_user
+    user_data['user_physics_work_user'] = user.user_physics_work_user
+    user_data['is_admin_flag'] = user.check_admin()
