@@ -47,12 +47,7 @@ def add_user(user_in: User):
 
 
 def get_all_user() -> list[UserDB]:
-    users_row = table.all()
-    users = []
-    for i in users_row:
-        users.append(UserDB(id=i['id'], telegram_username=i['username'], first_name=i['first_name'],
-                            idea_flag=i["idea_flag"]))
-    return users
+    return session.query(UserDB).all()
 
 
 def check_exist_user(user_in: User) -> bool:
