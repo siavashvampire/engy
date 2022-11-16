@@ -3,7 +3,7 @@ from app.user.model.user_model import UserDB
 from core.database.database import session
 
 
-def get_user(id_in: int = 0, username: str = "", user: User = None) -> UserDB:
+def get_user(id_in: int = 0, user_id: int = 0, username: str = "", user: User = None) -> UserDB:
     # return UserDB(id=user.id, username=user.username, first_name=user.first_name,
     #               last_name=user.last_name)
 
@@ -13,9 +13,14 @@ def get_user(id_in: int = 0, username: str = "", user: User = None) -> UserDB:
     if user is not None:
         id_check = user.id
 
-    temp = session.query(UserDB).filter(UserDB.id == id_check).first()
-    if temp is not None:
-        return temp
+    if id_check != 0:
+        temp = session.query(UserDB).filter(UserDB.id == id_check).first()
+        if temp is not None:
+            return temp
+    if user_id != 0:
+        temp = session.query(UserDB).filter(UserDB.user_id == user_id).first()
+        if temp is not None:
+            return temp
 
     return UserDB(id=user.id, username=user.username, first_name=user.first_name,
                   last_name=user.last_name)
