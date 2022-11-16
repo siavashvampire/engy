@@ -23,3 +23,4 @@ def start(update: Update, context: CallbackContext):
             update.message.reply_text("Sorry ,we cant add you to Engy users")
     else:
         update.message.reply_text("your already are engy user")
+        context.user_data['user'] = get_user(user=user)
