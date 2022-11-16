@@ -27,7 +27,7 @@ def start(update: Update, context: CallbackContext):
 
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
 
-    flag = user.check_admin()
+    flag = user_data['is_admin_flag']
     if flag:
         reply_markup = get_ikm_physics_lab_1_user_list()
         message = update.message.reply_text("select student who want to see his status",
