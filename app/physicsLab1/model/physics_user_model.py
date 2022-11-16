@@ -42,6 +42,7 @@ class PhysicsLab1UserDB(Base):
                     self.user_id = temp.user_id
                 else:
                     self.user_id = 0
+
     def insert_user(self) -> bool:
         temp: PhysicsLab1UserDB = session.query(PhysicsLab1UserDB).join(UserDB).filter(
             UserDB.user_id == self.user_id).first()
@@ -85,6 +86,5 @@ class PhysicsLab1UserDB(Base):
         self.student_number = student_number
         session.commit()
 
-
-def __repr__(self):
-    return "<PhysicsUser(%r, %r)>" % (self.user_id, self.id)
+    def __repr__(self):
+        return "<PhysicsUser(%r, %r)>" % (self.user_id, self.id)
