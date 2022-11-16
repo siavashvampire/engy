@@ -2,16 +2,13 @@ from app.gmail.gmail import Gmail
 
 from pathlib import Path
 
-
-
 parent_path = Path(__file__).resolve().parent
 
 gmail = Gmail()
 
-
-
 if __name__ == '__main__':
     from core.database.database import create_db
+
     create_db()
 
     from telegram.ext import Dispatcher, CallbackQueryHandler
