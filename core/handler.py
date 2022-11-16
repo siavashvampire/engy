@@ -39,11 +39,11 @@ def text_handler(update: Update, context: CallbackContext) -> None:
     command = update.message.text
     command = str(command).lower()
     if 'app' not in chat_data.keys() or chat_data['app'] == '':
-        if command == 'time':
-            time(update, context)
-            return
-        elif command == 'jtime':
+        if command in ['jtime', 'persian time'] or ('jtime' in command or 'persian time' in command):
             jtime(update, context)
+            return
+        if command in ['time'] or 'time' in command:
+            time(update, context)
             return
         update.message.reply_text("command not set")
         return
