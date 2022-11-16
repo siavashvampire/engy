@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, BigInteger
 from sqlalchemy.orm import relationship
 from telegram import User
 
@@ -67,7 +67,7 @@ class UserDB(User, Base):
     __tablename__ = 'users'
 
     user_id = Column(Integer, primary_key=True, autoincrement=True, unique=True)
-    id = Column(Integer, primary_key=True, unique=True)
+    id = Column(BigInteger, primary_key=True, unique=True)
     first_name = Column(String(50))
     last_name = Column(String(50))
     username = Column(String(50))
