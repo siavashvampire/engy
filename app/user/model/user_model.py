@@ -118,5 +118,11 @@ class UserDB(User, Base):
         except:
             return False
 
+    def check_exist_user(self) -> bool:
+        temp: UserDB = session.query(UserDB).filter(UserDB.id == self.id).first()
+        if temp is not None:
+            return True
+        return False
+
     def __repr__(self):
         return "<User(%r, %r)>" % (self.first_name, self.id)

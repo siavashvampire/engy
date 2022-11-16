@@ -29,7 +29,6 @@ def query_handler(update: Update, context: CallbackContext) -> None:
             context.bot.send_message(update.effective_user.id, "command not set")
             return
 
-
     elif chat_data['app'] == 'physics_lab_1':
         physics_lab_1_query_handler(update, context)
 

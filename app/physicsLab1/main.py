@@ -8,6 +8,10 @@ from core.style.InlineKeyboardMarkup import get_ikm_physics_lab_1_class, get_ikm
 
 
 def start(update: Update, context: CallbackContext):
+    user_data = context.user_data
+    if 'user' not in user_data.keys() or user_data['user'] == '':
+        update.message.reply_text("your are not an engy user,please start bot with command /start to join")
+        return
     chat_data = context.chat_data
     chat_data['app'] = 'physics_lab_1'
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
@@ -33,7 +37,7 @@ def start(update: Update, context: CallbackContext):
         user = get_user(user=user)
         flag = user.check_access()
         if not flag:
-            update.message.reply_text("you dont have access to send pdf plz contact admin")
+            update.message.reply_text("you dont have access to send pdf please contact admin")
             return
         else:
             flag = user.check_admin()

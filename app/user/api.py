@@ -1,8 +1,22 @@
 from telegram import User
 from app.user.model.user_model import UserDB
+from core.database.database import session
 
 
 def get_user(id_in: int = 0, username: str = "", user: User = None) -> UserDB:
+    # return UserDB(id=user.id, username=user.username, first_name=user.first_name,
+    #               last_name=user.last_name)
+
+    id_check = 0
+    if id_in != 0:
+        id_check = id_in
+    if user is not None:
+        id_check = user.id
+
+    temp = session.query(UserDB).filter(UserDB.id == id_check).first()
+    if temp is not None:
+        return temp
+
     return UserDB(id=user.id, username=user.username, first_name=user.first_name,
                   last_name=user.last_name)
     # query_text = ""
@@ -34,3 +48,7 @@ def get_all_user() -> list[UserDB]:
         users.append(UserDB(id=i['id'], telegram_username=i['username'], first_name=i['first_name'],
                             idea_flag=i["idea_flag"]))
     return users
+
+
+def check_exist_user(user_in: User) -> bool:
+    return get_user(user=user_in).check_exist_user()

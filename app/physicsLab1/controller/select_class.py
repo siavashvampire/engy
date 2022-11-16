@@ -10,6 +10,7 @@ from core.handler import download_document
 def select_class(update: Update, context: CallbackContext):
     query = update.callback_query
     chat_data = context.chat_data
+
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=chat_data['physics_lab_1_message_id'])
     user = get_user(user=update.effective_user)
     user.change_class(int(query.data))
