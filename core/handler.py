@@ -81,14 +81,14 @@ def audio_handler(update: Update, context: CallbackContext):
     ogg_version.export(path_temp2, format="wav")
 
     with sr.AudioFile(str(path_temp2)) as source:
-        # listen for the data (load audio to memory)
         audio_data = r.record(source)
-        # recognize (convert from speech to text)
+
         try:
             command = r.recognize_google(audio_data)
         except:
             update.message.reply_text("we can not recognize what you said")
             return
+        
     command = str(command).lower()
     os.remove(str(path_temp))
     os.remove(str(path_temp2))
