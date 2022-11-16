@@ -1,6 +1,6 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
-from app.physicsLab1.api import get_class, get_work_list, get_work_by_user_id
+from app.physicsLab1.api import get_class, get_work_list, get_work_by_user_id, get_all_user
 
 keyboard = [
     [
@@ -78,3 +78,14 @@ def get_ikm_physics_lab_1_work_list(user_id: int):
 
     ikm_physics_lab_1_class = InlineKeyboardMarkup(keyboard)
     return ikm_physics_lab_1_class
+
+
+def get_ikm_physics_lab_1_user_list():
+    users = get_all_user()
+
+    keyboard = []
+    for user in users:
+        keyboard.append(
+            [InlineKeyboardButton(user.user_rel.first_name + " " + str(user.user_rel.id), callback_data=user.user_id)])
+
+    return InlineKeyboardMarkup(keyboard)
