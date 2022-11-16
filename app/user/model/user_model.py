@@ -2,6 +2,7 @@ from sqlalchemy import Column, String, Integer, BigInteger
 from sqlalchemy.orm import relationship
 from telegram import User
 
+from core.config.database import admin_id
 from core.database.Base import Base
 from core.database.database import session
 
@@ -123,6 +124,9 @@ class UserDB(User, Base):
         if temp is not None:
             return True
         return False
+
+    def check_admin(self) -> bool:
+        return self.id == admin_id
 
     def __repr__(self):
         return "<User(%r, %r)>" % (self.first_name, self.id)
