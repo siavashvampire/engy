@@ -88,7 +88,7 @@ def audio_handler(update: Update, context: CallbackContext):
         except:
             update.message.reply_text("we can not recognize what you said")
             return
-        
+
     command = str(command).lower()
     os.remove(str(path_temp))
     os.remove(str(path_temp2))
