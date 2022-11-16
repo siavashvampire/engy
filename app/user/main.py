@@ -1,9 +1,10 @@
 from telegram import Update
 from telegram.ext import CallbackContext
 
-
+from app.physicsLab1.main import set_user_to_user_data
 from app.user.api import add_user, check_exist_user, get_user
 from time import sleep
+
 
 def start(update: Update, context: CallbackContext):
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
@@ -18,9 +19,9 @@ def start(update: Update, context: CallbackContext):
         context.bot.delete_message(chat_id=update.effective_chat.id, message_id=temp_message.message_id)
         if flag:
             update.message.reply_text("You have been added to Engy users correctly")
-            context.user_data['user'] = get_user(user=user)
+            set_user_to_user_data(update, context)
         else:
             update.message.reply_text("Sorry ,we cant add you to Engy users")
     else:
         update.message.reply_text("your already are engy user")
-        context.user_data['user'] = get_user(user=user)
+        set_user_to_user_data(update, context)

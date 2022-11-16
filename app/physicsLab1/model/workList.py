@@ -22,7 +22,7 @@ class PhysicsLab1WorkListDB(Base):
         user = get_user(user_id)
         work.user_id = user.user_rel.user_id
         work.work_list = self.id
-        work.date_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+        work.date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         try:
             session.add(work)

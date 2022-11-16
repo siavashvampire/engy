@@ -30,10 +30,10 @@ def get_work_list() -> list[PhysicsLab1WorkListDB]:
 
 
 def get_work_by_user_id(user_id: int) -> list[PhysicsLab1WorkDB]:
-    return session.query(PhysicsLab1WorkDB).filter(PhysicsLab1WorkDB.user_id == user_id).all()
+    return session.query(PhysicsLab1WorkDB).order_by(PhysicsLab1WorkDB.work_list).filter(PhysicsLab1WorkDB.user_id == user_id).all()
 
 
-def get_work_by_id(id_in: int) -> PhysicsLab1WorkListDB:
+def get_work_list_by_id(id_in: int) -> PhysicsLab1WorkListDB:
     return session.query(PhysicsLab1WorkListDB).filter(PhysicsLab1WorkListDB.id == id_in).first()
 
 
@@ -45,7 +45,7 @@ def check_exist_user(user_in: User) -> bool:
     return get_user(user=user_in).check_exist_user()
 
 
-def set_user_access(id_in, cond):
+def set_user_access(id_in: int, cond: str) -> None:
     if cond == 'accept':
         cond = True
     else:
@@ -54,9 +54,4 @@ def set_user_access(id_in, cond):
 
 
 def get_all_user() -> list[PhysicsLab1UserDB]:
-    users_row = table.all()
-    users = []
-    for i in users_row:
-        users.append(PhysicsLab1UserDB(user_id=i['id'], telegram_username=i['username'], first_name=i['first_name'],
-                                       idea_flag=i["idea_flag"]))
-    return users
+    return session.query(PhysicsLab1UserDB).all()

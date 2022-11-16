@@ -1,7 +1,11 @@
+from datetime import datetime
+
+import jdatetime
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 
-from app.physicsLab1.api import get_user, get_work_by_id
+from app.physicsLab1.api import get_user, get_work_list_by_id, get_work_by_user_id
+from app.user.api import get_user as get_user_db
 from app.physicsLab1.main import reset
 from core.config.database import admin_id
 from core.handler import download_document
@@ -28,13 +32,30 @@ def select_work(update: Update, context: CallbackContext):
     query = update.callback_query
     chat_data = context.chat_data
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=chat_data['physics_lab_1_message_id'])
-    work = get_work_by_id(int(query.data))
+    work = get_work_list_by_id(int(query.data))
     message = update.effective_message.reply_text(
         "You have been selected work " + work.work_name + "\nplease enter your pdf")
 
     chat_data['command'] = 'enter_work_pdf'
     chat_data['data'] = int(query.data)
     chat_data['physics_lab_1_message_id'] = message.message_id
+    query.answer()
+
+
+def select_user_for_detail(update: Update, context: CallbackContext):
+    query = update.callback_query
+    chat_data = context.chat_data
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=chat_data['physics_lab_1_message_id'])
+    works = get_work_by_user_id(int(query.data))
+    user = get_user_db(user_id=int(query.data))
+    text = user.first_name + " " + str(user.id) + "\n" * 3
+    for work in works:
+        text += work.work.work_name + ":\n" + str(jdatetime.datetime.fromgregorian(
+            datetime=datetime.strptime(str(works[0].date_time),
+                                       "%Y-%m-%d %H:%M:%S"))) + "\n" + "------------------" + "\n" * 2
+    message = update.effective_message.reply_text(
+        text)
+    reset(update, context)
     query.answer()
 
 
@@ -48,7 +69,7 @@ def enter_work_pdf(update: Update, context: CallbackContext):
     path = download_document(update.message.document, '../app/physicsLab1/HW/' + str(user.user_rel.id) + '/',
                              'HW_' + str(chat_data['data']) + '.pdf')
 
-    work = get_work_by_id(chat_data['data'])
+    work = get_work_list_by_id(chat_data['data'])
     work.insert_data(user.user_rel.id)
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=message.message_id)
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.message.message_id)
