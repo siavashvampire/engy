@@ -49,6 +49,8 @@ class PhysicsLab1UserDB(Base):
         if temp is not None:
             return False
         try:
+            if  not self.student_number:
+                self.student_number = self.user_id
             session.add(self)
             session.commit()
             return True
