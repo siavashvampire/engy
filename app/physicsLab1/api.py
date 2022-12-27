@@ -30,7 +30,8 @@ def get_work_list() -> list[PhysicsLab1WorkListDB]:
 
 
 def get_work_by_user_id(user_id: int) -> list[PhysicsLab1WorkDB]:
-    return session.query(PhysicsLab1WorkDB).order_by(PhysicsLab1WorkDB.work_list).filter(PhysicsLab1WorkDB.user_id == user_id).all()
+    return session.query(PhysicsLab1WorkDB).order_by(PhysicsLab1WorkDB.work_list).filter(
+        PhysicsLab1WorkDB.user_id == user_id).all()
 
 
 def get_work_list_by_id(id_in: int) -> PhysicsLab1WorkListDB:
