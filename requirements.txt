@@ -1,6 +1,6 @@
-google-api-python-client==2.65.0
+google-api-python-client==2.70.0
 google-auth-httplib2==0.1.0
-google-auth-oauthlib==0.7.1
+google-auth-oauthlib==0.8.0
 tinydb==4.7.0
 python-telegram-bot==13.14
 SQLAlchemy==1.4.43
@@ -8,3 +8,5 @@ mysqlclient==2.1.1
 speechrecognition==3.8.1
 pydub==0.25.1
 jdatetime==4.1.0
+excel2img==1.4.0
+pandas==1.5.2
