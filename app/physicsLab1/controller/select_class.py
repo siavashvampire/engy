@@ -49,12 +49,13 @@ def select_user_for_detail(update: Update, context: CallbackContext):
     works = get_work_by_user_id(int(query.data))
     user = get_user_db(user_id=int(query.data))
     text = user.first_name + " " + str(user.id) + "\n" * 3
+    text += '@' + user.user_rel.username + "\n" * 3
+    
     for work in works:
         text += work.work.work_name + ":\n" + str(jdatetime.datetime.fromgregorian(
             datetime=datetime.strptime(str(works[0].date_time),
                                        "%Y-%m-%d %H:%M:%S"))) + "\n" + "------------------" + "\n" * 2
-    message = update.effective_message.reply_text(
-        text)
+    message = update.effective_message.reply_text(text)
     reset(update, context)
     query.answer()
 
