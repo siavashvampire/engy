@@ -13,8 +13,9 @@ class PhysicsLab1WorkDB(Base):
     date_time = Column(DateTime)
     score = Column(Integer, nullable=True)
 
-    user_rel = relationship("UserDB", back_populates="user_physics_work_user")
     work = relationship("PhysicsLab1WorkListDB", back_populates="work")
+    user_rel = relationship("UserDB", back_populates="user_physics_work_user")
+    # user_physics_rel = relationship("PhysicsLab1UserDB", back_populates="work_rel")
 
     def __repr__(self):
         return f"\n<PhysicsLab1WorkDB {self.user_rel.first_name} , {self.work.work_name}>"

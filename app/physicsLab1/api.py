@@ -25,13 +25,25 @@ def get_class() -> list[PhysicsLab1ClassDB]:
     return session.query(PhysicsLab1ClassDB).all()
 
 
-def get_work_list() -> list[PhysicsLab1WorkListDB]:
+def get_work_list_all() -> list[PhysicsLab1WorkListDB]:
     return session.query(PhysicsLab1WorkListDB).order_by(PhysicsLab1WorkListDB.id).all()
+
+
+def get_work_list_can_insert() -> list[PhysicsLab1WorkListDB]:
+    return session.query(PhysicsLab1WorkListDB).filter(PhysicsLab1WorkListDB.can_insert == 1).order_by(
+        PhysicsLab1WorkListDB.id).all()
+def get_work_list_can_not_insert() -> list[PhysicsLab1WorkListDB]:
+    return session.query(PhysicsLab1WorkListDB).filter(PhysicsLab1WorkListDB.can_insert == 0).order_by(
+        PhysicsLab1WorkListDB.id).all()
 
 
 def get_work_by_user_id(user_id: int) -> list[PhysicsLab1WorkDB]:
     return session.query(PhysicsLab1WorkDB).order_by(PhysicsLab1WorkDB.work_list).filter(
         PhysicsLab1WorkDB.user_id == user_id).all()
+
+
+def get_work_all() -> list[PhysicsLab1WorkDB]:
+    return session.query(PhysicsLab1WorkDB).order_by(PhysicsLab1WorkDB.work_list).all()
 
 
 def get_work_list_by_id(id_in: int) -> PhysicsLab1WorkListDB:

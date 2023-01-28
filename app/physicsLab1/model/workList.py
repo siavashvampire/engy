@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 
 from app.physicsLab1.model.workDB import PhysicsLab1WorkDB
@@ -13,6 +13,7 @@ class PhysicsLab1WorkListDB(Base):
 
     id = Column(Integer, primary_key=True, unique=True)
     work_name = Column(String(50), default="", unique=True)
+    can_insert = Column(Boolean(), default=True)
 
     work = relationship("PhysicsLab1WorkDB", back_populates="work")
 
@@ -31,7 +32,6 @@ class PhysicsLab1WorkListDB(Base):
         except Exception as e:
             print(e)
             return False
-
 
     def __repr__(self):
         return f"\n<PhysicsLab1WorkListDB  {self.work_name}>"

@@ -1,6 +1,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
-from app.physicsLab1.api import get_class, get_work_list, get_work_by_user_id, get_all_user
+from app.physicsLab1.api import get_class,  get_work_by_user_id, get_all_user, \
+    get_work_list_can_insert
 
 keyboard = [
     [
@@ -59,7 +60,7 @@ def get_ikm_physics_lab_1_class():
 
 
 def get_ikm_physics_lab_1_work_list(user_id: int):
-    physics_lab_1_work_lists = get_work_list()
+    physics_lab_1_work_lists = get_work_list_can_insert()
     physics_lab_1_work_lists_del = get_work_by_user_id(user_id)
     del_idx = []
     for idx, work in enumerate(physics_lab_1_work_lists):

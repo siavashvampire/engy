@@ -18,6 +18,7 @@ class PhysicsLab1UserDB(Base):
 
     class_rel = relationship("PhysicsLab1ClassDB", back_populates="user_rel")
     user_rel = relationship("UserDB", back_populates="user_physics_user")
+    # work_rel = relationship("PhysicsLab1WorkDB", back_populates="user_physics_rel")
 
     def __init__(self, user_id: int = 0) -> None:
 
