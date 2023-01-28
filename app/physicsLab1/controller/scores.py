@@ -26,15 +26,15 @@ def remove(sheet, row):
 
 def get_one_person_score_by_user(update: Update, context: CallbackContext):
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
-    
+
     get_one_person_score_by_id(update, context, update.effective_user.id)
 
 
 def get_one_person_score_by_id(update: Update, context: CallbackContext, id_in: int):
     user = get_user(id_in=id_in)
 
-    update.message.reply_chat_action('upload_photo')
-    message = update.message.reply_text("uploading photo")
+    update.effective_message.reply_chat_action('upload_photo')
+    message = update.effective_message.reply_text("uploading photo")
     path = '../junk/'
 
     if not os.path.exists(parent_path.joinpath(path)):
@@ -83,11 +83,11 @@ def get_one_person_score_by_id(update: Update, context: CallbackContext, id_in: 
     excel2img.export_img(path_xlsx, path_png)
 
     try:
-        update.message.reply_document(open(path_xlsx, 'rb'))
-        update.message.reply_photo(open(path_png, 'rb'))
+        update.effective_message.reply_document(open(path_xlsx, 'rb'))
+        update.effective_message.reply_photo(open(path_png, 'rb'))
     except Exception as e:
         print(e)
-        update.message.reply_text("something went wrong,contact admin")
+        update.effective_message.reply_text("something went wrong,contact admin")
 
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=message.message_id)
     os.remove(path_png)
@@ -96,8 +96,8 @@ def get_one_person_score_by_id(update: Update, context: CallbackContext, id_in: 
 
 def get_all_score(update: Update, context: CallbackContext):
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
-    update.message.reply_chat_action('upload_document')
-    message = update.message.reply_text("uploading document")
+    update.effective_message.reply_chat_action('upload_document')
+    message = update.effective_message.reply_text("uploading document")
     path = '../junk/'
 
     if not os.path.exists(parent_path.joinpath(path)):
@@ -153,11 +153,11 @@ def get_all_score(update: Update, context: CallbackContext):
     # excel2img.export_img(path_xlsx, path_png)
 
     try:
-        update.message.reply_document(open(path_xlsx, 'rb'))
-        # update.message.reply_photo(open(path_png, 'rb'))
+        update.effective_message.reply_document(open(path_xlsx, 'rb'))
+        # update.effective_message.reply_photo(open(path_png, 'rb'))
     except Exception as e:
         print(e)
-        update.message.reply_text("something went wrong,contact admin")
+        update.effective_message.reply_text("something went wrong,contact admin")
 
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=message.message_id)
 
@@ -167,10 +167,10 @@ def get_all_score(update: Update, context: CallbackContext):
 
 def get_score(update: Update, context: CallbackContext):
     user = get_user(user=update.effective_user)
-    user_db = get_user_db(user=update.message.from_user)
+    user_db = get_user_db(user=update.effective_message.from_user)
 
     if (user.user_id == 0 or user.id is None) and not user_db.check_admin():
-        update.message.reply_text("your are not an engy user,please start bot with command /start to join")
+        update.effective_message.reply_text("your are not an engy user,please start bot with command /start to join")
         return
 
     if not user_db.check_admin():
