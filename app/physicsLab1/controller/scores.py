@@ -25,8 +25,11 @@ def remove(sheet, row):
 
 
 def get_one_person_score_by_user(update: Update, context: CallbackContext):
-    user = get_user(user=update.effective_user)
-    # user = get_user(id_in=915453626)
+    get_one_person_score_by_id(update, context, update.effective_user.id)
+
+
+def get_one_person_score_by_id(update: Update, context: CallbackContext, id_in: int):
+    user = get_user(id_in=id_in)
 
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
     update.message.reply_chat_action('upload_photo')

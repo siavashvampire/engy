@@ -5,6 +5,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 
 from app.physicsLab1.api import get_user, get_work_list_by_id, get_work_by_user_id
+from app.physicsLab1.controller.scores import get_one_person_score_by_id
 from app.user.api import get_user as get_user_db
 from app.physicsLab1.main import reset
 from core.config.database import admin_id
@@ -60,6 +61,16 @@ def select_user_for_detail(update: Update, context: CallbackContext):
             datetime=datetime.strptime(str(works[0].date_time),
                                        "%Y-%m-%d %H:%M:%S"))) + "\n" + "------------------" + "\n" * 2
     message = update.effective_message.reply_text(text)
+    reset(update, context)
+    query.answer()
+
+
+def select_user_for_score(update: Update, context: CallbackContext):
+    query = update.callback_query
+    chat_data = context.chat_data
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=chat_data['physics_lab_1_message_id'])
+    user = get_user_db(user_id=int(query.data))
+    get_one_person_score_by_id(update, context, user.id)
     reset(update, context)
     query.answer()
 
