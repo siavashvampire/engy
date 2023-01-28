@@ -48,9 +48,13 @@ def select_user_for_detail(update: Update, context: CallbackContext):
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=chat_data['physics_lab_1_message_id'])
     works = get_work_by_user_id(int(query.data))
     user = get_user_db(user_id=int(query.data))
-    text = user.first_name + " " + str(user.id) + "\n" * 3
-    text += '@' + user.user_rel.username + "\n" * 3
-    
+    text = user.first_name + " " + str(user.id)
+
+    if user.username is not None:
+        text += '(@' + user.username + ')'
+
+    text += "\n" * 3
+
     for work in works:
         text += work.work.work_name + ":\n" + str(jdatetime.datetime.fromgregorian(
             datetime=datetime.strptime(str(works[0].date_time),
@@ -64,6 +68,10 @@ def enter_work_pdf(update: Update, context: CallbackContext):
     chat_data = context.chat_data
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=chat_data['physics_lab_1_message_id'])
     message = update.effective_message.reply_text("downloading your work ...")
+    update.effective_message.reply_chat_action('upload_document')
+
+    # https://docs.python-telegram-bot.org/en/stable/telegram.constants.html#telegram.constants.ChatAction
+
     user = get_user(user=update.effective_user)
     path = download_document(update.message.document, '../app/physicsLab1/HW/HW_' + str(chat_data['data']) + '/',
                              str(user.user_rel.id) + '.pdf')
