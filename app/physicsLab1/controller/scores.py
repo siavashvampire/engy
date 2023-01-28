@@ -10,9 +10,9 @@ from telegram.ext import CallbackContext
 from app.physicsLab1.api import get_work_by_user_id, get_user, get_work_list_all, get_work_all
 from app.user.api import get_user as get_user_db
 
-parent_path = Path(__file__).resolve().parent
-
 import openpyxl
+
+parent_path = Path(__file__).resolve().parent
 
 
 # function to remove empty rows
