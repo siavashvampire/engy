@@ -19,6 +19,9 @@ def get_score(update: Update, context: CallbackContext):
         return
 
     update.message.reply_chat_action('upload_photo')
+
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
+    message = update.message.reply_text("uploading photo")
     path = '../junk/'
 
     if not os.path.exists(parent_path.joinpath(path)):
@@ -59,5 +62,10 @@ def get_score(update: Update, context: CallbackContext):
 
     os.remove(path_xlsx)
 
-    update.message.reply_photo(open(path_png, 'rb'))
+    try:
+        update.message.reply_photo(open(path_png, 'rb'))
+    except:
+        update.message.reply_text("something went wrong,contact admin")
+
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=message.message_id)
     os.remove(path_png)
