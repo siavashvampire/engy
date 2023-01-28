@@ -13,14 +13,15 @@ parent_path = Path(__file__).resolve().parent
 
 
 def get_score(update: Update, context: CallbackContext):
-    user = get_user(user=update.effective_user)
-    if user.user_id == 0 or  user.user_id is None:
+    # user = get_user(user=update.effective_user)
+    user = get_user(id_in = 915453626)
+
+    if user.user_id == 0 or user.id is None:
         update.message.reply_text("your are not an engy user,please start bot with command /start to join")
         return
 
-    update.message.reply_chat_action('upload_photo')
-
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
+    update.message.reply_chat_action('upload_photo')
     message = update.message.reply_text("uploading photo")
     path = '../junk/'
 
@@ -43,6 +44,10 @@ def get_score(update: Update, context: CallbackContext):
 
     index = 0
 
+    worksheet.write(index, 1, user.user_rel.full_name, cell_format)
+    worksheet.write(index, 0, 'نام', cell_format)
+    index += 1
+
     worksheet.write(index, 1, 'نام آزمایش', cell_format)
     worksheet.write(index, 0, 'نمره', cell_format)
     index += 1
@@ -64,7 +69,8 @@ def get_score(update: Update, context: CallbackContext):
 
     try:
         update.message.reply_photo(open(path_png, 'rb'))
-    except:
+    except Exception as e:
+        print(e)
         update.message.reply_text("something went wrong,contact admin")
 
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=message.message_id)
