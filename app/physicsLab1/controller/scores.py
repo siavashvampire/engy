@@ -13,8 +13,7 @@ parent_path = Path(__file__).resolve().parent
 
 
 def get_score(update: Update, context: CallbackContext):
-    # user = get_user(user=update.effective_user)
-    user = get_user(id_in = 915453626)
+    user = get_user(user=update.effective_user)
 
     if user.user_id == 0 or user.id is None:
         update.message.reply_text("your are not an engy user,please start bot with command /start to join")
