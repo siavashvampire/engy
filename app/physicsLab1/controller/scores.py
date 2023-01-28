@@ -53,8 +53,12 @@ def get_one_person_score_by_user(update: Update, context: CallbackContext):
 
     index = 0
 
-    worksheet.write(index, 1, user.user_rel.full_name, cell_format)
-    worksheet.write(index, 0, 'نام', cell_format)
+    worksheet.write(index, 0, user.user_rel.full_name, cell_format)
+    worksheet.write(index, 1, 'نام', cell_format)
+    index += 1
+
+    worksheet.write(index, 0, get_user(id_in=user.user_rel.id).student_number, cell_format)
+    worksheet.write(index, 1, 'شماره دانشجویی', cell_format)
     index += 1
 
     worksheet.write(index, 1, 'نام آزمایش', cell_format)
@@ -99,6 +103,8 @@ def get_all_score(update: Update, context: CallbackContext):
 
     path_xlsx = str(path.joinpath('./physicsLab1_all.xlsx'))
 
+    # path_png = str(path.joinpath('./physicsLab1_all.png'))
+
     works_list = get_work_list_all()
 
     workbook = xlsxwriter.Workbook(path_xlsx)
@@ -140,9 +146,11 @@ def get_all_score(update: Update, context: CallbackContext):
         for row in sheet:
             remove(sheet, row)
     wb.save(path_xlsx)
+    # excel2img.export_img(path_xlsx, path_png)
 
     try:
         update.message.reply_document(open(path_xlsx, 'rb'))
+        # update.message.reply_photo(open(path_png, 'rb'))
     except Exception as e:
         print(e)
         update.message.reply_text("something went wrong,contact admin")
@@ -150,6 +158,7 @@ def get_all_score(update: Update, context: CallbackContext):
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=message.message_id)
 
     os.remove(path_xlsx)
+    # os.remove(path_png)
 
 
 def get_score(update: Update, context: CallbackContext):
