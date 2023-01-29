@@ -125,12 +125,16 @@ def get_all_score(update: Update, context: CallbackContext):
 
     index = 0
 
+    worksheet.write(0, index, 'user_id', cell_format)
+    index += 1
+
     worksheet.write(0, index, 'نام', cell_format)
     index += 1
 
     worksheet.write(0, index, 'شماره دانشجویی', cell_format)
     index += 1
 
+    update_index = index-1
     for work in works_list:
         worksheet.write(0, index, work.work_name, cell_format)
         index += 1
@@ -139,12 +143,13 @@ def get_all_score(update: Update, context: CallbackContext):
 
     for work in works:
         user = get_user(id_in=work.user_rel.id)
-        worksheet.write(work.user_id, 0, user.full_name, cell_format)
-        worksheet.write(work.user_id, 1, user.student_number, cell_format)
+        worksheet.write(work.user_id, 0, user.user_id, cell_format)
+        worksheet.write(work.user_id, 1, user.full_name, cell_format)
+        worksheet.write(work.user_id, 2, user.student_number, cell_format)
         if work.score is None:
-            worksheet.write(work.user_id, work.work.id + 1, 'تصحیح نشده', cell_format)
+            worksheet.write(work.user_id, work.work.id + update_index, 'تصحیح نشده', cell_format)
         else:
-            worksheet.write(work.user_id, work.work.id + 1, work.score, cell_format)
+            worksheet.write(work.user_id, work.work.id + update_index, work.score, cell_format)
 
     worksheet.set_column('A:W', 40)
     workbook.close()

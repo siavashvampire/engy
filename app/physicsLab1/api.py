@@ -6,6 +6,8 @@ from app.physicsLab1.model.workList import PhysicsLab1WorkListDB
 from app.user.model.user_model import UserDB
 from core.database.database import session
 
+import pandas as pd
+
 
 def get_user(id_in: int = 0, username: str = "", user: User = None, user_id: int = 0) -> PhysicsLab1UserDB:
     id_check = 0
@@ -84,3 +86,20 @@ def set_user_access(id_in: int, cond: str) -> None:
 
 def get_all_user() -> list[PhysicsLab1UserDB]:
     return session.query(PhysicsLab1UserDB).all()
+
+
+def set_score_from_excel():
+    df = pd.read_excel('./physicsLab1_all.xlsx')
+
+    update_index = 2
+
+    for _, row in df.iterrows():
+        works = row[update_index + 1:]
+        user_id = row[0]
+        for idx, work in enumerate(works):
+            if type(work) == float and not work != work:
+                try:
+                    work_temp = get_work_by_user_id_work_id(user_id, idx + 1)
+                    work_temp.update_score(work)
+                except:
+                    print(user_id, idx + 1)

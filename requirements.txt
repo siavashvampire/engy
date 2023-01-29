@@ -11,3 +11,4 @@ jdatetime==4.1.0
 excel2img==1.4.0
 openpyxl == 3.0.10
 xlsxwriter == 3.0.7
+pandas==1.5.2
