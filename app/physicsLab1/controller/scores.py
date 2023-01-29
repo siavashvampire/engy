@@ -227,7 +227,6 @@ def select_user_for_set_score(update: Update, context: CallbackContext):
         update.effective_message.reply_text("student upload nothing")
         reset(update, context)
 
-    reset(update, context)
 
 
 def get_score_for_set_score(update: Update, context: CallbackContext):
