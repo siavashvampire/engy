@@ -7,10 +7,14 @@ import xlsxwriter
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from app.physicsLab1.api import get_work_by_user_id, get_user, get_work_list_all, get_work_all
+from app.physicsLab1.api import get_work_by_user_id, get_user, get_work_list_all, get_work_all, get_work_by_id
+from app.physicsLab1.main import set_user_to_user_data, reset
 from app.user.api import get_user as get_user_db
 
 import openpyxl
+
+from core.style.InlineKeyboardMarkup import get_ikm_physics_lab_1_user_list, \
+    get_ikm_physics_lab_1_work_list_for_set_score
 
 parent_path = Path(__file__).resolve().parent
 
@@ -177,3 +181,83 @@ def get_score(update: Update, context: CallbackContext):
         get_one_person_score_by_user(update, context)
     else:
         get_all_score(update, context)
+
+
+def set_score(update: Update, context: CallbackContext):
+    user_db = get_user_db(user=update.effective_message.from_user)
+
+    set_user_to_user_data(update, context)
+    user_data = context.user_data
+
+    if not user_db.check_admin():
+        update.effective_message.reply_text("your are not allow to use this")
+        return
+
+    chat_data = context.chat_data
+    chat_data['app'] = 'physics_lab_1'
+
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
+
+    if user_data['is_admin_flag']:
+        reply_markup = get_ikm_physics_lab_1_user_list()
+        message = update.message.reply_text("select student who want to set his score",
+                                            reply_markup=reply_markup)
+
+        chat_data['physics_lab_1_message_id'] = message.message_id
+        chat_data['command'] = 'select_user_for_set_score'
+        return
+
+
+def select_user_for_set_score(update: Update, context: CallbackContext):
+    query = update.callback_query
+    chat_data = context.chat_data
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=chat_data['physics_lab_1_message_id'])
+    query.answer()
+
+    user = get_user_db(user_id=int(query.data))
+
+    reply_markup = get_ikm_physics_lab_1_work_list_for_set_score(user.user_id)
+    if len(reply_markup.inline_keyboard):
+        message = update.effective_message.reply_text("please select a HW ,whose you want to set score",
+                                                      reply_markup=reply_markup)
+        chat_data['command'] = 'select_work_set_score'
+        chat_data['data'] = {'user_id': int(query.data)}
+        chat_data['physics_lab_1_message_id'] = message.message_id
+    else:
+        update.effective_message.reply_text("student upload nothing")
+        reset(update, context)
+
+    reset(update, context)
+
+
+def get_score_for_set_score(update: Update, context: CallbackContext):
+    query = update.callback_query
+    chat_data = context.chat_data
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=chat_data['physics_lab_1_message_id'])
+    chat_data['data']['work_id'] = int(query.data)
+
+    work = get_work_by_id(chat_data['data']['work_id'])
+    message = update.effective_message.reply_text(
+        "You have been selected work " + work.work.work_name + "\nplease enter your score")
+
+    chat_data['command'] = 'enter_work_score'
+    chat_data['physics_lab_1_message_id'] = message.message_id
+    query.answer()
+
+
+def enter_score(update: Update, context: CallbackContext):
+    chat_data = context.chat_data
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=chat_data['physics_lab_1_message_id'])
+    context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.effective_message.message_id)
+
+    work = get_work_by_id(chat_data['data']['work_id'])
+    try:
+        work.update_score(
+            int(update.effective_message.text))  # TODO:bayad age int vared nakarde bod dobare biad to hamin marhale v bg int vared kon
+    except:
+        update.effective_message.reply_text("something went wrong")
+    user = get_user(user_id=work.user_id)
+    update.effective_message.reply_text(
+        "You have been updated score of work " + work.work.work_name + " from " + user.full_name + " to " + str(
+            update.effective_message.text))
+    reset(update, context)

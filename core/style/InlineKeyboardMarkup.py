@@ -1,6 +1,6 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
-from app.physicsLab1.api import get_class,  get_work_by_user_id, get_all_user, \
+from app.physicsLab1.api import get_class, get_work_by_user_id, get_all_user, \
     get_work_list_can_insert
 
 keyboard = [
@@ -59,7 +59,7 @@ def get_ikm_physics_lab_1_class():
     return ikm_physics_lab_1_class
 
 
-def get_ikm_physics_lab_1_work_list(user_id: int):
+def get_ikm_physics_lab_1_work_list(user_id: int) -> InlineKeyboardMarkup:
     physics_lab_1_work_lists = get_work_list_can_insert()
     physics_lab_1_work_lists_del = get_work_by_user_id(user_id)
     del_idx = []
@@ -80,12 +80,23 @@ def get_ikm_physics_lab_1_work_list(user_id: int):
     return InlineKeyboardMarkup(keyboard)
 
 
+def get_ikm_physics_lab_1_work_list_for_set_score(user_id: int) -> InlineKeyboardMarkup:
+    physics_lab_1_work_lists = get_work_by_user_id(user_id)
+
+    keyboard = []
+    for physics_lab_1_work_list in physics_lab_1_work_lists:
+        keyboard.append(
+            [InlineKeyboardButton(physics_lab_1_work_list.work.work_name, callback_data=physics_lab_1_work_list.id)])
+
+    return InlineKeyboardMarkup(keyboard)
+
+
 def get_ikm_physics_lab_1_user_list():
     users = get_all_user()
 
     keyboard = []
     for user in users:
         keyboard.append(
-            [InlineKeyboardButton(user.user_rel.first_name + " " + str(user.user_rel.id), callback_data=user.user_id)])
+            [InlineKeyboardButton(user.full_name + " " + str(user.user_rel.id), callback_data=user.user_id)])
 
     return InlineKeyboardMarkup(keyboard)

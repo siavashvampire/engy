@@ -7,7 +7,7 @@ from app.user.model.user_model import UserDB
 from core.database.database import session
 
 
-def get_user(id_in: int = 0, username: str = "", user: User = None) -> PhysicsLab1UserDB:
+def get_user(id_in: int = 0, username: str = "", user: User = None, user_id: int = 0) -> PhysicsLab1UserDB:
     id_check = 0
     if id_in != 0:
         id_check = id_in
@@ -17,6 +17,11 @@ def get_user(id_in: int = 0, username: str = "", user: User = None) -> PhysicsLa
     temp = session.query(PhysicsLab1UserDB).join(UserDB).filter(UserDB.id == id_check).first()
     if temp is not None:
         return temp
+
+    if user_id != 0:
+        temp = session.query(PhysicsLab1UserDB).filter(PhysicsLab1UserDB.user_id == user_id).first()
+        if temp is not None:
+            return temp
 
     return PhysicsLab1UserDB(user_id=id_check)
 
@@ -32,6 +37,8 @@ def get_work_list_all() -> list[PhysicsLab1WorkListDB]:
 def get_work_list_can_insert() -> list[PhysicsLab1WorkListDB]:
     return session.query(PhysicsLab1WorkListDB).filter(PhysicsLab1WorkListDB.can_insert == 1).order_by(
         PhysicsLab1WorkListDB.id).all()
+
+
 def get_work_list_can_not_insert() -> list[PhysicsLab1WorkListDB]:
     return session.query(PhysicsLab1WorkListDB).filter(PhysicsLab1WorkListDB.can_insert == 0).order_by(
         PhysicsLab1WorkListDB.id).all()
@@ -48,6 +55,15 @@ def get_work_all() -> list[PhysicsLab1WorkDB]:
 
 def get_work_list_by_id(id_in: int) -> PhysicsLab1WorkListDB:
     return session.query(PhysicsLab1WorkListDB).filter(PhysicsLab1WorkListDB.id == id_in).first()
+
+
+def get_work_by_user_id_work_id(id_in: int, work_id: int) -> PhysicsLab1WorkDB:
+    return session.query(PhysicsLab1WorkDB).filter(
+        PhysicsLab1WorkDB.user_id == id_in, PhysicsLab1WorkDB.work_list == work_id).first()
+
+
+def get_work_by_id(id_in: int) -> PhysicsLab1WorkDB:
+    return session.query(PhysicsLab1WorkDB).filter(PhysicsLab1WorkDB.id == id_in).first()
 
 
 def add_user(user_in: User) -> bool:

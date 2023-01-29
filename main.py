@@ -2,7 +2,7 @@ from app.gmail.gmail import Gmail
 
 from pathlib import Path
 
-from app.physicsLab1.controller.scores import get_score
+from app.physicsLab1.controller.scores import get_score, set_score
 
 parent_path = Path(__file__).resolve().parent
 
@@ -39,6 +39,7 @@ if __name__ == '__main__':
     dp.add_handler(CommandHandler('time', time))
     dp.add_handler(CommandHandler('jtime', jtime))
     dp.add_handler(CommandHandler('get_score', get_score))
+    dp.add_handler(CommandHandler('set_score', set_score))
     dp.add_handler(CommandHandler('physics_lab1', physics_start))
     dp.add_handler(MessageHandler(Filters.text, text_handler))
     dp.add_handler(MessageHandler(Filters.document.pdf, pdf_handler))

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, Boolean, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 from app.user.model.user_model import UserDB
@@ -15,6 +15,7 @@ class PhysicsLab1UserDB(Base):
     student_number = Column(Integer, primary_key=True, unique=True, nullable=True)
     class_id = Column(ForeignKey("physics_lab_1_class.id"), nullable=True)
     accept = Column(Boolean, default=0)
+    full_name = Column(String(50))
 
     class_rel = relationship("PhysicsLab1ClassDB", back_populates="user_rel")
     user_rel = relationship("UserDB", back_populates="user_physics_user")
