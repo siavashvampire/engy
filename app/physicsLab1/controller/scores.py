@@ -61,7 +61,7 @@ def get_one_person_score_by_id(update: Update, context: CallbackContext, id_in: 
 
     index = 0
 
-    worksheet.write(index, 0, user.user_rel.full_name, cell_format)
+    worksheet.write(index, 0, user.full_name, cell_format)
     worksheet.write(index, 1, 'نام', cell_format)
     index += 1
 
@@ -138,8 +138,9 @@ def get_all_score(update: Update, context: CallbackContext):
     works = get_work_all()
 
     for work in works:
-        worksheet.write(work.user_id, 0, work.user_rel.full_name, cell_format)
-        worksheet.write(work.user_id, 1, get_user(id_in=work.user_rel.id).student_number, cell_format)
+        user = get_user(id_in=work.user_rel.id)
+        worksheet.write(work.user_id, 0, user.full_name, cell_format)
+        worksheet.write(work.user_id, 1, user.student_number, cell_format)
         if work.score is None:
             worksheet.write(work.user_id, work.work.id + 1, 'تصحیح نشده', cell_format)
         else:
