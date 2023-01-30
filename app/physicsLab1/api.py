@@ -97,7 +97,7 @@ def set_score_from_excel():
         works = row[update_index + 1:]
         user_id = row[0]
         for idx, work in enumerate(works):
-            if type(work) == float and not work != work:
+            if (type(work) == float or type(work) == int) and not work != work:
                 try:
                     work_temp = get_work_by_user_id_work_id(user_id, idx + 1)
                     work_temp.update_score(work)
