@@ -8,6 +8,9 @@ from core.database.database import session
 
 import pandas as pd
 
+import openpyxl
+import xlsxwriter
+
 
 def get_user(id_in: int = 0, username: str = "", user: User = None, user_id: int = 0) -> PhysicsLab1UserDB:
     id_check = 0
@@ -103,3 +106,60 @@ def set_score_from_excel():
                     work_temp.update_score(work)
                 except:
                     print(user_id, idx + 1)
+
+
+def remove(sheet, row):
+    for cell in row:
+        if cell.value is not None:
+            return
+    sheet.delete_rows(row[0].row, 1)
+
+
+def prepare_all_score(path_xlsx: str = './physicsLab1_all.xlsx') -> None:
+    workbook = xlsxwriter.Workbook(path_xlsx)
+
+    worksheet = workbook.add_worksheet('scores')
+    cell_format = workbook.add_format()
+
+    cell_format.set_align('center')
+    cell_format.set_align('vcenter')
+
+    index = 0
+
+    worksheet.write(0, index, 'user_id', cell_format)
+    index += 1
+
+    worksheet.write(0, index, 'نام', cell_format)
+    index += 1
+
+    worksheet.write(0, index, 'شماره دانشجویی', cell_format)
+    index += 1
+
+    works_list = get_work_list_all()
+
+    update_index = index - 1
+    for work in works_list:
+        worksheet.write(0, index, work.work_name, cell_format)
+        index += 1
+
+    works = get_work_all()
+
+    for work in works:
+        user = get_user(id_in=work.user_rel.id)
+        worksheet.write(work.user_id, 0, user.user_id, cell_format)
+        worksheet.write(work.user_id, 1, user.full_name, cell_format)
+        worksheet.write(work.user_id, 2, user.student_number, cell_format)
+        if work.score is None:
+            worksheet.write(work.user_id, work.work.id + update_index, 'تصحیح نشده', cell_format)
+        else:
+            worksheet.write(work.user_id, work.work.id + update_index, work.score, cell_format)
+
+    worksheet.set_column('A:W', 40)
+    workbook.close()
+
+    wb = openpyxl.load_workbook(path_xlsx)
+    sheet = wb['scores']
+    for i in range(20):
+        for row in sheet:
+            remove(sheet, row)
+    wb.save(path_xlsx)
